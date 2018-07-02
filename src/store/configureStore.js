@@ -1,4 +1,5 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
+import {persistToken} from "../middleware/middleware";
 import thunk from 'redux-thunk';
 import authReducer from '../reducers/auth';
 
@@ -9,7 +10,7 @@ export default () => {
     combineReducers({
       auth: authReducer
     }),
-    composeEnhancers(applyMiddleware(thunk))
+    composeEnhancers(applyMiddleware(persistToken, thunk))
   );
 
   return store;

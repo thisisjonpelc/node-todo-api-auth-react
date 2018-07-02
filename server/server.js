@@ -15,7 +15,7 @@ const app = express();
 const publicPath = path.join(__dirname, '..', 'public');
 const port = process.env.PORT;
 
-app.usee(bodyParser.json());
+app.use(bodyParser.json());
 app.use(express.static(publicPath));
 
 
@@ -160,9 +160,13 @@ app.get("/users/me", authenticate, (req, res) => {
 });
 
 app.post("/users/login", async (req, res) => {
+  console.log("Attemping to login user");
+
   try{
     const body = _.pick(req.body, ["email", "password"]);
+    console.log(body);
     const user = await User.findByCredentials(body.email, body.password);
+    console.log("User: ", user);
     const token = await user.generateAuthToken();
     res.header("x-auth", token).send(user);
   }
@@ -182,11 +186,13 @@ app.delete("/users/me/token", authenticate, async (req, res) => {
 });
 
 app.get("/users/me/token", authenticate, async (req, res) => {
+  console.log("Trying to get a new token");
   try{
     const token = await req.user.generateAuthToken();
-    res.header("x-auth", token).send(user);
+    res.header("x-auth", token).send(req.user);
   }
   catch(e){
+    console.log(e);
     res.status(400).send();
   }
 });

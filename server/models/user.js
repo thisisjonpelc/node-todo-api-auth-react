@@ -49,7 +49,7 @@ UserSchema.methods.generateAuthToken = function() {
   user.removeExpiredTokens();
 
   const options = {
-    expiresIn: "5m"
+    expiresIn: "7d"
   };
 
   var token = jwt.sign({_id: user._id.toHexString(), access}, process.env.JWT_SECRET, options).toString();
@@ -76,12 +76,19 @@ UserSchema.methods.removeExpiredTokens = function() {
 
   user.tokens = user.tokens.filter((token) => {
 
+    console.log("TOKEN", token);
+
     tokenValue = token.token;
 
+    console.log("TOKEN VALUE", tokenValue);
+
     try{
-      jwt.verify(token, process.env.JWT_SECRET);
+      jwt.verify(tokenValue, process.env.JWT_SECRET);
+      console.log("This token hasn't expired");
     }
     catch(e){
+      console.log(e);
+      console.log("Removing token");
       return false;
     }
 
